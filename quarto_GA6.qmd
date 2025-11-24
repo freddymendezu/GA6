@@ -24,7 +24,7 @@ fav_food[c(1,5)]
 #2. Load the tidyverse package. We have seen in the class that when we load the tidyverse package, we see many warnings. Use the code chunk option to hide the warning. Read your metadata.tsv file from the garrigos-data/meta directory and save it as object metadata. Write down the data structure of the metadata, number of variables, and rows.
 
 ```{r}
-#| echo: false
+#| warning: FALSE
 library(tidyverse)
 metadata <- read_tsv(file = "/fs/ess/PAS2880/users/garrigos-data/meta/metadata.tsv")
 metadata
@@ -100,9 +100,10 @@ new_datasets |>
 
 ### Quarto and Data Visualization
 
-# 1. Create the violin plot with state in x-axis and area in y-axis. Facet the plot based on the category.
+1\. Create the violin plot with state in x-axis and area in y-axis. Facet the plot based on the category.
 
 ```{r}
+#| warning: FALSE
 midwest_datasets |> 
 ggplot(aes(x = state, y = area)) +
   geom_violin() +
@@ -120,21 +121,27 @@ ggplot(aes(x = state, y = poptotal)) +
 
 
 ```
-# This point color is local mapping, since color = category is inside the geom_jitter() function and not by the ggplot()function (if this where the case the mapping will be global).
 
+#This point color is local mapping, since color = category is inside the geom_jitter() function and not by the ggplot()function (if this where the case the mapping will be global).
 
 #3. In the above plot change the theme to theme_bw and color the state manually instead of using default colors. Add the title of the plot using the code chunk options. Save this plot as an object violin_plot.
 
 ```{r}
+
 violin_plot <- midwest_datasets |> 
 ggplot(aes(x = state, y = poptotal)) +
   geom_violin() +
   geom_jitter(aes(color = state)) +
     scale_color_manual(values = c("blue","green","purple","red","orange")) +
-    labs(title = "Violin plot of population by state") +
-            theme_bw()
+    labs(title = "Violin Plot of Population by State") +
+            theme_bw() +
+ theme(plot.title = element_text(hjust = 0.5)) #to center the title
 
 violin_plot
          
 ```
 
+```{r}
+ggsave("violoin_plot.png", violin_plot, width = 8, height = 5)
+
+```
