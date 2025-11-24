@@ -9,23 +9,96 @@ toc: true
 self-contained: true
 ---
 
-## Quarto
+## **Main assignment:**
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+### R Basics
 
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+#1. Create a character vector fav_food with five names of your favorite food. Replace third element of the vector with a bird name and extract first and fifth element.
 
 ```{r}
-1 + 1
+fav_food <- c("Burger", "arepa", "tacos", "shawarma", "Tamal_huilense")
+fav_food[3] <- "Humming-bird"
+fav_food[c(1,5)]
 ```
 
-You can add options to executable code like this
+#2. Load the tidyverse package. We have seen in the class that when we load the tidyverse package, we see many warnings. Use the code chunk option to hide the warning. Read your metadata.tsv file from the garrigos-data/meta directory and save it as object metadata. Write down the data structure of the metadata, number of variables, and rows.
 
 ```{r}
 #| echo: false
-2 * 2
+library(tidyverse)
+metadata <- read_tsv(file = "/fs/ess/PAS2880/users/garrigos-data/meta/metadata.tsv")
+metadata
+# Number of variables: 3 variables
+# number of rows: 22 rows
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+#3. In the metadata object, replace the dpi with \_dpi of the time variable and cathemerium with cath of the treatment variable.
+
+```{r}
+metadata |>
+  mutate(
+    time = sub(pattern = "dpi", replacement = "_dpi", x = time)
+  )
+```
+```{r}
+metadata |>
+  mutate(
+    treatment = sub(pattern = "cathemerium", replacement = "cath", x = treatment)
+  )
+```
+
+### Data wrangling
+
+#1. List all the datasets available in the ggplot2 package. Read the data from inbuilt- dataset midwest. Save it as an object midwest_datasets and use the midwest_datasets to answer all the question afterwards.
+
+```{r}
+data(package = "ggplot2")
+data("midwest")
+view(midwest)
+midwest_datasets <- ggplot2::midwest
+```
+
+#using the pipe for questions 2, 3 and 4
+
+```{r}
+new_dataset <- midwest_datasets |>
+  filter(poptotal > 30000, popdensity > 800)|>
+  select(1:11) |>
+  mutate(asian_ameri = popasian / popamerindian) |>
+  arrange(desc(asian_ameri)) |>
+  group_by(state) |>
+  summarise(poptotal = mean(poptotal, na.rm = TRUE))
+
+```
+
+
+#2. Filter the rows with poptotal > 30000 and popdensity > 800.
+
+```
+midwest_datasets |>
+  filter(poptotal > 30000, popdensity > 800)
+
+```
+
+
+#3. Select first 11 variables of the dataset. Create a new column named asian_ameri in midwest_datasets object by dividing popasian by popamerindian and sort asian_ameri in descending order. Save this output as new_dataset object
+
+```
+midwest_datasets |>
+  select(1:11)
+
+new_dataset <- midwest_datasets |>
+  mutate(asian_ameri = popasian / popamerindian) |>
+  arrange(desc(asian_ameri))
+```
+
+
+#4. Compute the total mean population per state and name the mean column as poptotal.
+
+```
+new_datasets |>
+  group_by(state) |>
+  summarise(poptotal = mean(poptotal, na.rm = TRUE))
+
+```
+
