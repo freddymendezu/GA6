@@ -40,6 +40,7 @@ metadata |>
     time = sub(pattern = "dpi", replacement = "_dpi", x = time)
   )
 ```
+
 ```{r}
 metadata |>
   mutate(
@@ -71,19 +72,16 @@ new_dataset <- midwest_datasets |>
 
 ```
 
+#2. Filter the rows with poptotal \> 30000 and popdensity \> 800.
 
-#2. Filter the rows with poptotal > 30000 and popdensity > 800.
-
-```
+```         
 midwest_datasets |>
   filter(poptotal > 30000, popdensity > 800)
-
 ```
-
 
 #3. Select first 11 variables of the dataset. Create a new column named asian_ameri in midwest_datasets object by dividing popasian by popamerindian and sort asian_ameri in descending order. Save this output as new_dataset object
 
-```
+```         
 midwest_datasets |>
   select(1:11)
 
@@ -92,13 +90,51 @@ new_dataset <- midwest_datasets |>
   arrange(desc(asian_ameri))
 ```
 
-
 #4. Compute the total mean population per state and name the mean column as poptotal.
 
-```
+```         
 new_datasets |>
   group_by(state) |>
   summarise(poptotal = mean(poptotal, na.rm = TRUE))
+```
 
+### Quarto and Data Visualization
+
+# 1. Create the violin plot with state in x-axis and area in y-axis. Facet the plot based on the category.
+
+```{r}
+midwest_datasets |> 
+ggplot(aes(x = state, y = area)) +
+  geom_violin() +
+  facet_wrap(vars(category))
+
+```
+
+#2. Create a violin plot again with state in x-axis and poptotal in y-axis. Add the jitter points on the plot and color just the points based on the category. Is this point color global or local mapping? please explain.
+
+```{r}
+midwest_datasets |> 
+ggplot(aes(x = state, y = poptotal)) +
+  geom_violin() +
+  geom_jitter(aes(color = category))
+
+
+```
+# This point color is local mapping, since color = category is inside the geom_jitter() function and not by the ggplot()function (if this where the case the mapping will be global).
+
+
+#3. In the above plot change the theme to theme_bw and color the state manually instead of using default colors. Add the title of the plot using the code chunk options. Save this plot as an object violin_plot.
+
+```{r}
+violin_plot <- midwest_datasets |> 
+ggplot(aes(x = state, y = poptotal)) +
+  geom_violin() +
+  geom_jitter(aes(color = state)) +
+    scale_color_manual(values = c("blue","green","purple","red","orange")) +
+    labs(title = "Violin plot of population by state") +
+            theme_bw()
+
+violin_plot
+         
 ```
 
